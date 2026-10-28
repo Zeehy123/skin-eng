@@ -1,0 +1,8 @@
+# dev.txt adds tools used only while developing 
+# during production this wont install 
+-r base.txt
+pytest>=8
+pytest-django>=4.9
+# pytest and pytest-django: the test runner, plus Django support.
+ruff>=0.8
+# ruff: a fast linter and formatter.

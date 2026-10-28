@@ -1,0 +1,3223 @@
+{
+ "meta": {
+  "name": "Skincare engine seed v1",
+  "created": "2026-10-26",
+  "status": "DEMO CONTENT. Not medical advice. Needs expert review before any real customer sees it.",
+  "formats": {
+   "condition": "AND of keys: all_flags, any_flags, none_flags, skin_types, sensitive (bool), concerns (selected), concern_bands {concern: [bands]}; any_of [conditions] gives OR; {} always passes",
+   "effect": "[kind, target, weight]. kinds: score (target skin type or 'sensitive'), severity (target concern), flag, caution (target caution group), require_step (target step type, weight = priority 1-3), red_flag (target = message)",
+   "money": "integer kobo (100 kobo = 1 Naira)",
+   "precedence": "avoid and caution always override seek"
+  },
+  "notes": [
+   "All products are fictional demo products.",
+   "Items with needs_review true are not from the cited article and must be checked by an expert.",
+   "test_cases were verified against a small filter-only checker; scoring and ranking are not covered yet."
+  ]
+ },
+ "sources": {
+  "hl_dry_dehydrated": {
+   "title": "Dry Skin vs. Dehydrated: How to Tell the Difference - And Why It Matters",
+   "publisher": "Healthline",
+   "author": "Deanna Debara",
+   "medical_reviewer": "Megan Slomka, MSN, APRN, FNP-C",
+   "updated": "2025-05-05",
+   "url": "https://www.healthline.com/health/beauty-skin-care/dry-vs-dehydrated",
+   "accessed": "2026-10-26",
+   "note": "Paraphrased, not copied. General-audience article."
+  },
+  "client_draft": {
+   "title": "Client draft questions and cautions",
+   "note": "Written by the project owner."
+  },
+  "general": {
+   "title": "General skincare guidance",
+   "note": "Unsourced in the seed; needs expert review."
+  }
+ },
+ "brand": {
+  "slug": "demo-skin-co",
+  "name": "Demo Skin Co (fictional)",
+  "currency": "NGN",
+  "store_enabled": true,
+  "buy_mode": "cart",
+  "colours": {
+   "primary": "#2f6f5e",
+   "accent": "#f2b8a0"
+  }
+ },
+ "vocabularies": {
+  "skin_types": [
+   {
+    "code": "normal",
+    "name": "Normal",
+    "description": "Balanced; neither often oily nor often tight.",
+    "identify": "Comfortable after cleansing, little shine, few visible pores."
+   },
+   {
+    "code": "dry",
+    "name": "Dry",
+    "description": "Produces less oil than average.",
+    "identify": "Tight, rough or flaky, especially after washing; little shine."
+   },
+   {
+    "code": "oily",
+    "name": "Oily",
+    "description": "Produces more oil than average.",
+    "identify": "Shiny across the face a few hours after washing; enlarged pores."
+   },
+   {
+    "code": "combination",
+    "name": "Combination",
+    "description": "Oily in the T-zone (forehead, nose, chin), normal or dry elsewhere.",
+    "identify": "Shine on forehead and nose, comfortable or tight cheeks."
+   }
+  ],
+  "flags": [
+   {
+    "code": "post_acne",
+    "name": "Dark marks after breakouts"
+   },
+   {
+    "code": "sun_related",
+    "name": "Marks linked to sun exposure"
+   },
+   {
+    "code": "patchy_pigmentation",
+    "name": "Patchy pigmentation, no clear trigger"
+   },
+   {
+    "code": "irritated",
+    "name": "Skin currently irritated"
+   },
+   {
+    "code": "irritated_strong",
+    "name": "Often irritated or using strong actives"
+   },
+   {
+    "code": "tight_after_cleansing",
+    "name": "Tight after cleansing"
+   },
+   {
+    "code": "possible_barrier_damage",
+    "name": "Possible damaged skin barrier"
+   },
+   {
+    "code": "gradual",
+    "name": "Gradual onset"
+   },
+   {
+    "code": "over_exfoliation",
+    "name": "Possible over-exfoliation"
+   },
+   {
+    "code": "dry_air",
+    "name": "Dry air or season"
+   },
+   {
+    "code": "product_reaction",
+    "name": "Started after a product change"
+   },
+   {
+    "code": "slow_rebound",
+    "name": "Slow pinch-test rebound"
+   },
+   {
+    "code": "oily_dehydrated",
+    "name": "Oily but tight or dull"
+   },
+   {
+    "code": "hot_showers",
+    "name": "Long hot showers"
+   },
+   {
+    "code": "over_washing",
+    "name": "Washes face too often"
+   },
+   {
+    "code": "low_water_intake",
+    "name": "Low water intake"
+   },
+   {
+    "code": "foaming_cleanser",
+    "name": "Uses a foaming cleanser"
+   },
+   {
+    "code": "active_use",
+    "name": "Uses strong actives"
+   },
+   {
+    "code": "active_use_high",
+    "name": "Uses strong actives often"
+   },
+   {
+    "code": "cracking",
+    "name": "Mild cracking"
+   },
+   {
+    "code": "pregnancy",
+    "name": "Pregnant or breastfeeding (or unsure)"
+   }
+  ],
+  "step_types": [
+   {
+    "code": "cleanser",
+    "name": "Cleanser"
+   },
+   {
+    "code": "hydrating_serum",
+    "name": "Hydrating serum"
+   },
+   {
+    "code": "treatment_serum",
+    "name": "Treatment serum"
+   },
+   {
+    "code": "moisturiser",
+    "name": "Moisturiser"
+   },
+   {
+    "code": "sunscreen",
+    "name": "Sunscreen"
+   }
+  ],
+  "forms": [
+   "gel",
+   "cream",
+   "foaming",
+   "lotion",
+   "milk",
+   "oil"
+  ],
+  "ingredient_functions": [
+   "base",
+   "humectant",
+   "occlusive",
+   "emollient",
+   "barrier_lipid",
+   "exfoliant",
+   "physical_exfoliant",
+   "retinoid",
+   "brightener",
+   "soothing",
+   "antioxidant",
+   "sunscreen_filter",
+   "surfactant_mild",
+   "surfactant_harsh",
+   "emulsifier",
+   "preservative",
+   "fragrance",
+   "colorant",
+   "solvent",
+   "essential_oil"
+  ]
+ },
+ "ingredients": [
+  {
+   "code": "water",
+   "name": "Water",
+   "functions": [
+    "base"
+   ],
+   "aliases": [
+    "aqua"
+   ]
+  },
+  {
+   "code": "glycerin",
+   "name": "Glycerin",
+   "functions": [
+    "humectant"
+   ],
+   "aliases": [
+    "glycerol"
+   ]
+  },
+  {
+   "code": "hyaluronic_acid",
+   "name": "Hyaluronic acid",
+   "functions": [
+    "humectant"
+   ],
+   "aliases": [
+    "sodium hyaluronate"
+   ]
+  },
+  {
+   "code": "ceramides",
+   "name": "Ceramides",
+   "functions": [
+    "barrier_lipid"
+   ],
+   "aliases": [
+    "ceramide np",
+    "ceramide ap",
+    "ceramide eop"
+   ]
+  },
+  {
+   "code": "panthenol",
+   "name": "Panthenol (vitamin B5)",
+   "functions": [
+    "humectant",
+    "soothing"
+   ],
+   "aliases": [
+    "vitamin b5",
+    "provitamin b5"
+   ]
+  },
+  {
+   "code": "aloe",
+   "name": "Aloe",
+   "functions": [
+    "humectant",
+    "soothing"
+   ],
+   "aliases": [
+    "aloe barbadensis leaf juice"
+   ]
+  },
+  {
+   "code": "squalane",
+   "name": "Squalane",
+   "functions": [
+    "emollient"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "shea_butter",
+   "name": "Shea butter",
+   "functions": [
+    "occlusive",
+    "emollient"
+   ],
+   "aliases": [
+    "butyrospermum parkii butter"
+   ]
+  },
+  {
+   "code": "lactic_acid",
+   "name": "Lactic acid",
+   "functions": [
+    "exfoliant"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "glycolic_acid",
+   "name": "Glycolic acid",
+   "functions": [
+    "exfoliant"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "salicylic_acid",
+   "name": "Salicylic acid",
+   "functions": [
+    "exfoliant"
+   ],
+   "aliases": [
+    "bha"
+   ]
+  },
+  {
+   "code": "retinol",
+   "name": "Retinol",
+   "functions": [
+    "retinoid"
+   ],
+   "aliases": [
+    "vitamin a"
+   ]
+  },
+  {
+   "code": "niacinamide",
+   "name": "Niacinamide",
+   "functions": [
+    "brightener",
+    "soothing"
+   ],
+   "aliases": [
+    "vitamin b3",
+    "nicotinamide"
+   ]
+  },
+  {
+   "code": "vitamin_c_derivative",
+   "name": "Gentle vitamin C derivative",
+   "functions": [
+    "brightener",
+    "antioxidant"
+   ],
+   "aliases": [
+    "ascorbyl glucoside",
+    "sodium ascorbyl phosphate",
+    "magnesium ascorbyl phosphate"
+   ]
+  },
+  {
+   "code": "ascorbic_acid_l",
+   "name": "L-ascorbic acid (strong vitamin C)",
+   "functions": [
+    "brightener",
+    "antioxidant"
+   ],
+   "aliases": [
+    "l-ascorbic acid"
+   ]
+  },
+  {
+   "code": "azelaic_acid",
+   "name": "Azelaic acid",
+   "functions": [
+    "brightener"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "alpha_arbutin",
+   "name": "Alpha arbutin",
+   "functions": [
+    "brightener"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "tranexamic_acid",
+   "name": "Tranexamic acid",
+   "functions": [
+    "brightener"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "zinc_oxide",
+   "name": "Zinc oxide",
+   "functions": [
+    "sunscreen_filter"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "chemical_uv_filters",
+   "name": "Chemical UV filters",
+   "functions": [
+    "sunscreen_filter"
+   ],
+   "aliases": [
+    "avobenzone",
+    "octocrylene",
+    "homosalate"
+   ]
+  },
+  {
+   "code": "sodium_lauryl_sulfate",
+   "name": "Sodium lauryl sulfate",
+   "functions": [
+    "surfactant_harsh"
+   ],
+   "aliases": [
+    "sls",
+    "sodium laureth sulfate"
+   ]
+  },
+  {
+   "code": "cocamidopropyl_betaine",
+   "name": "Cocamidopropyl betaine",
+   "functions": [
+    "surfactant_mild"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "glyceryl_stearate",
+   "name": "Glyceryl stearate",
+   "functions": [
+    "emulsifier"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "phenoxyethanol",
+   "name": "Phenoxyethanol",
+   "functions": [
+    "preservative"
+   ],
+   "aliases": []
+  },
+  {
+   "code": "fragrance",
+   "name": "Fragrance",
+   "functions": [
+    "fragrance"
+   ],
+   "aliases": [
+    "parfum",
+    "perfume"
+   ]
+  },
+  {
+   "code": "denatured_alcohol",
+   "name": "Denatured alcohol",
+   "functions": [
+    "solvent"
+   ],
+   "aliases": [
+    "alcohol denat",
+    "sd alcohol"
+   ]
+  },
+  {
+   "code": "dyes",
+   "name": "Added dyes",
+   "functions": [
+    "colorant"
+   ],
+   "aliases": [
+    "ci 19140",
+    "ci 42090"
+   ]
+  },
+  {
+   "code": "physical_scrub",
+   "name": "Physical scrub particles",
+   "functions": [
+    "physical_exfoliant"
+   ],
+   "aliases": [
+    "walnut shell powder",
+    "sugar scrub"
+   ]
+  },
+  {
+   "code": "essential_oils",
+   "name": "Essential oils",
+   "functions": [
+    "essential_oil"
+   ],
+   "aliases": [
+    "lavender oil",
+    "citrus oil"
+   ]
+  }
+ ],
+ "caution_groups": [
+  {
+   "code": "exfoliating_acids",
+   "name": "Exfoliating acids",
+   "ingredients": [
+    "lactic_acid",
+    "glycolic_acid",
+    "salicylic_acid"
+   ],
+   "forms": []
+  },
+  {
+   "code": "retinoids",
+   "name": "Retinoids",
+   "ingredients": [
+    "retinol"
+   ],
+   "forms": []
+  },
+  {
+   "code": "all_actives",
+   "name": "All strong actives",
+   "ingredients": [
+    "lactic_acid",
+    "glycolic_acid",
+    "salicylic_acid",
+    "retinol",
+    "ascorbic_acid_l",
+    "azelaic_acid"
+   ],
+   "forms": []
+  },
+  {
+   "code": "sulfate_cleansers",
+   "name": "Sulfate cleansers",
+   "ingredients": [
+    "sodium_lauryl_sulfate"
+   ],
+   "forms": []
+  },
+  {
+   "code": "strong_cleansers",
+   "name": "Strong cleansers",
+   "ingredients": [
+    "sodium_lauryl_sulfate"
+   ],
+   "forms": [
+    "foaming"
+   ]
+  },
+  {
+   "code": "foaming_forms",
+   "name": "Foaming cleansers",
+   "ingredients": [],
+   "forms": [
+    "foaming"
+   ]
+  },
+  {
+   "code": "common_irritants",
+   "name": "Common irritants",
+   "ingredients": [
+    "fragrance",
+    "denatured_alcohol",
+    "dyes",
+    "physical_scrub",
+    "essential_oils"
+   ],
+   "forms": []
+  }
+ ],
+ "caution_rules": [
+  {
+   "group": "exfoliating_acids",
+   "level": "avoid",
+   "condition": {
+    "sensitive": true
+   },
+   "reason": "Strong exfoliating acids can irritate sensitive skin.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "group": "exfoliating_acids",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "irritated",
+     "over_exfoliation",
+     "active_use_high",
+     "possible_barrier_damage"
+    ]
+   },
+   "reason": "Pause exfoliating acids while skin is irritated or over-exfoliated.",
+   "source": "client_draft",
+   "needs_review": true
+  },
+  {
+   "group": "exfoliating_acids",
+   "level": "use_with_care",
+   "condition": {
+    "skin_types": [
+     "dry"
+    ]
+   },
+   "reason": "Dry skin can be easily over-exfoliated.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "group": "retinoids",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "pregnancy",
+     "over_exfoliation",
+     "active_use_high",
+     "possible_barrier_damage"
+    ]
+   },
+   "reason": "Retinoids are not recommended in pregnancy, and can worsen an irritated or damaged barrier.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "group": "all_actives",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "possible_barrier_damage"
+    ]
+   },
+   "reason": "Use no strong actives until the barrier recovers.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "group": "sulfate_cleansers",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "tight_after_cleansing"
+    ]
+   },
+   "reason": "Sulfate cleansers can leave skin tight.",
+   "source": "client_draft",
+   "needs_review": true
+  },
+  {
+   "group": "foaming_forms",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "tight_after_cleansing"
+    ]
+   },
+   "reason": "Prefer non-foaming cleansers when skin feels tight.",
+   "source": "client_draft",
+   "needs_review": true
+  },
+  {
+   "group": "common_irritants",
+   "level": "avoid",
+   "condition": {
+    "sensitive": true
+   },
+   "reason": "Fragrance, dyes, alcohol and scrubs often irritate sensitive skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": true
+  },
+  {
+   "group": "common_irritants",
+   "level": "avoid",
+   "condition": {
+    "any_flags": [
+     "possible_barrier_damage"
+    ]
+   },
+   "reason": "Avoid irritants while the barrier recovers.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": true
+  }
+ ],
+ "concerns": [
+  {
+   "code": "hyperpigmentation",
+   "name": "Hyperpigmentation (dark marks)",
+   "summary": "Areas of skin that look darker than the surrounding skin.",
+   "causes": [
+    "Marks left after breakouts",
+    "Sun exposure",
+    "Hormonal or unknown causes"
+   ],
+   "recognise": "Flat dark spots or patches, often on cheeks, forehead or where pimples were.",
+   "sources": [
+    "general"
+   ],
+   "needs_review": true
+  },
+  {
+   "code": "dehydration",
+   "name": "Dehydration",
+   "summary": "Skin lacking water (not oil). Can affect any skin type, including oily.",
+   "causes": [
+    "Dry or harmattan air",
+    "Air conditioning",
+    "Long hot showers",
+    "Over-washing",
+    "Over-exfoliating",
+    "Harsh cleansers",
+    "Low water intake"
+   ],
+   "recognise": "Dullness, fine surface lines, tightness or itchiness, a tired look, patchy makeup.",
+   "sources": [
+    "hl_dry_dehydrated",
+    "general",
+    "client_draft"
+   ],
+   "needs_review": true
+  }
+ ],
+ "concern_ingredients": [
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "niacinamide",
+   "effect": "seek",
+   "priority": 3,
+   "condition": {},
+   "reason": "Niacinamide helps fade dark marks and suits most skin types.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "vitamin_c_derivative",
+   "effect": "seek",
+   "priority": 3,
+   "condition": {},
+   "reason": "Gentle vitamin C helps brighten uneven tone.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "azelaic_acid",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Azelaic acid helps with marks left by breakouts.",
+   "source": "general",
+   "needs_review": true,
+   "boosts": [
+    {
+     "condition": {
+      "all_flags": [
+       "post_acne"
+      ]
+     },
+     "boost": 2
+    }
+   ]
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "alpha_arbutin",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Alpha arbutin helps lighten dark spots.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "tranexamic_acid",
+   "effect": "seek",
+   "priority": 1,
+   "condition": {},
+   "reason": "Tranexamic acid can help patchy pigmentation.",
+   "source": "general",
+   "needs_review": true,
+   "boosts": [
+    {
+     "condition": {
+      "all_flags": [
+       "patchy_pigmentation"
+      ]
+     },
+     "boost": 1
+    }
+   ]
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "zinc_oxide",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Sunscreen stops marks from darkening.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "chemical_uv_filters",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Sunscreen stops marks from darkening.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "hyperpigmentation",
+   "ingredient": "physical_scrub",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Scrubs can irritate skin and worsen marks.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "glycerin",
+   "effect": "seek",
+   "priority": 3,
+   "condition": {},
+   "reason": "Glycerin draws water into the skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "hyaluronic_acid",
+   "effect": "seek",
+   "priority": 3,
+   "condition": {},
+   "reason": "Hyaluronic acid holds water in the skin; seal it in with a moisturiser.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "ceramides",
+   "effect": "seek",
+   "priority": 3,
+   "condition": {},
+   "reason": "Ceramides strengthen the skin barrier so water stays in.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false,
+   "boosts": [
+    {
+     "condition": {
+      "any_of": [
+       {
+        "any_flags": [
+         "over_exfoliation"
+        ]
+       },
+       {
+        "any_flags": [
+         "possible_barrier_damage"
+        ]
+       }
+      ]
+     },
+     "boost": 2
+    }
+   ]
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "panthenol",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Panthenol hydrates and calms.",
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "aloe",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Aloe hydrates and soothes.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "squalane",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {},
+   "reason": "Squalane seals in moisture without heaviness.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": true
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "shea_butter",
+   "effect": "seek",
+   "priority": 2,
+   "condition": {
+    "skin_types": [
+     "dry",
+     "normal"
+    ]
+   },
+   "reason": "Shea butter seals in water for dry skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "lactic_acid",
+   "effect": "seek",
+   "priority": 1,
+   "condition": {
+    "none_flags": [
+     "over_exfoliation",
+     "possible_barrier_damage",
+     "active_use_high",
+     "irritated"
+    ],
+    "sensitive": false
+   },
+   "reason": "Lactic acid gives gentle surface hydration.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": true
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "fragrance",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Fragrance can irritate dry or dehydrated skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "dyes",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Dyes can irritate dry or dehydrated skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "denatured_alcohol",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Alcohol can dry out and irritate skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "physical_scrub",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Physical scrubs can irritate dry or dehydrated skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "concern": "dehydration",
+   "ingredient": "essential_oils",
+   "effect": "avoid",
+   "priority": 3,
+   "condition": {},
+   "reason": "Undiluted essential oils can irritate skin.",
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  }
+ ],
+ "advice_tips": [
+  {
+   "code": "tip_dh_cleanser",
+   "concern": "dehydration",
+   "text": "Switch to a gentle, non-foaming, sulfate-free cleanser.",
+   "condition": {
+    "any_flags": [
+     "tight_after_cleansing"
+    ]
+   },
+   "source": "client_draft",
+   "needs_review": false
+  },
+  {
+   "code": "tip_dh_lukewarm",
+   "concern": "dehydration",
+   "text": "For a short while, cleanse with lukewarm water only until your skin feels comfortable.",
+   "condition": {
+    "any_of": [
+     {
+      "any_flags": [
+       "possible_barrier_damage"
+      ]
+     },
+     {
+      "concern_bands": {
+       "dehydration": [
+        "severe"
+       ]
+      }
+     }
+    ]
+   },
+   "source": "client_draft",
+   "needs_review": true
+  },
+  {
+   "code": "tip_dh_overexfoliation",
+   "concern": "dehydration",
+   "text": "Pause scrubs, exfoliating acids and retinoids until your skin feels comfortable again.",
+   "condition": {
+    "any_flags": [
+     "over_exfoliation"
+    ]
+   },
+   "source": "client_draft",
+   "needs_review": false
+  },
+  {
+   "code": "tip_dh_air",
+   "concern": "dehydration",
+   "text": "Keep showers short and warm, use a humidifier if you can, and moisturise while skin is still damp.",
+   "condition": {
+    "any_flags": [
+     "dry_air",
+     "hot_showers"
+    ]
+   },
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "code": "tip_dh_overwash",
+   "concern": "dehydration",
+   "text": "Cleanse no more than twice a day.",
+   "condition": {
+    "any_flags": [
+     "over_washing"
+    ]
+   },
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "code": "tip_dh_water",
+   "concern": "dehydration",
+   "text": "Drink enough water and eat water-rich foods such as watermelon, strawberries, cucumber and celery.",
+   "condition": {
+    "any_flags": [
+     "low_water_intake"
+    ]
+   },
+   "source": "hl_dry_dehydrated",
+   "needs_review": false
+  },
+  {
+   "code": "tip_dh_oily",
+   "concern": "dehydration",
+   "text": "Do not skip moisturiser; choose lightweight gel textures.",
+   "condition": {
+    "any_flags": [
+     "oily_dehydrated"
+    ]
+   },
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "code": "tip_dh_foaming",
+   "concern": "dehydration",
+   "text": "Try a creamy or gel cleanser instead of a foaming one.",
+   "condition": {
+    "any_flags": [
+     "foaming_cleanser"
+    ]
+   },
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "code": "tip_hp_sunscreen",
+   "concern": "hyperpigmentation",
+   "text": "Wear sunscreen every morning; sun exposure darkens marks.",
+   "condition": {},
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "code": "tip_hp_picking",
+   "concern": "hyperpigmentation",
+   "text": "Avoid picking or squeezing breakouts; it can leave marks.",
+   "condition": {
+    "any_flags": [
+     "post_acne"
+    ]
+   },
+   "source": "general",
+   "needs_review": true
+  },
+  {
+   "code": "tip_hp_patience",
+   "concern": "hyperpigmentation",
+   "text": "Fading marks takes several weeks to months; give a routine time.",
+   "condition": {},
+   "source": "general",
+   "needs_review": true
+  }
+ ],
+ "routine_templates": [
+  {
+   "code": "default",
+   "priority": 0,
+   "condition": {},
+   "steps": [
+    {
+     "step": "cleanser",
+     "required": true
+    },
+    {
+     "step": "treatment_serum",
+     "required": false
+    },
+    {
+     "step": "moisturiser",
+     "required": true
+    },
+    {
+     "step": "sunscreen",
+     "required": true
+    }
+   ]
+  },
+  {
+   "code": "hyperpigmentation_routine",
+   "priority": 1,
+   "condition": {
+    "concerns": [
+     "hyperpigmentation"
+    ]
+   },
+   "steps": [
+    {
+     "step": "cleanser",
+     "required": true
+    },
+    {
+     "step": "treatment_serum",
+     "required": true
+    },
+    {
+     "step": "moisturiser",
+     "required": true
+    },
+    {
+     "step": "sunscreen",
+     "required": true
+    }
+   ]
+  },
+  {
+   "code": "dehydration_routine",
+   "priority": 1,
+   "condition": {
+    "concerns": [
+     "dehydration"
+    ]
+   },
+   "steps": [
+    {
+     "step": "cleanser",
+     "required": true,
+     "preferred_forms": [
+      "milk",
+      "gel",
+      "cream"
+     ]
+    },
+    {
+     "step": "hydrating_serum",
+     "required": true
+    },
+    {
+     "step": "moisturiser",
+     "required": true
+    },
+    {
+     "step": "sunscreen",
+     "required": true
+    }
+   ]
+  },
+  {
+   "code": "barrier_first",
+   "priority": 3,
+   "note": "No actives.",
+   "condition": {
+    "any_of": [
+     {
+      "any_flags": [
+       "possible_barrier_damage"
+      ]
+     },
+     {
+      "concern_bands": {
+       "dehydration": [
+        "severe"
+       ]
+      }
+     }
+    ]
+   },
+   "steps": [
+    {
+     "step": "cleanser",
+     "required": true,
+     "preferred_forms": [
+      "milk",
+      "gel",
+      "cream"
+     ]
+    },
+    {
+     "step": "hydrating_serum",
+     "required": true
+    },
+    {
+     "step": "moisturiser",
+     "required": true
+    },
+    {
+     "step": "sunscreen",
+     "required": true
+    }
+   ]
+  }
+ ],
+ "products": [
+  {
+   "code": "milk_cleanser",
+   "name": "Gentle Milk Cleanser",
+   "fictional": true,
+   "active": true,
+   "step": "cleanser",
+   "form": "milk",
+   "price_kobo": 650000,
+   "skin_types": [
+    "dry",
+    "normal",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "glycerin",
+    "glyceryl_stearate",
+    "squalane",
+    "panthenol",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/milk_cleanser"
+  },
+  {
+   "code": "foam_cleanser",
+   "name": "Fresh Foaming Gel Cleanser",
+   "fictional": true,
+   "active": true,
+   "step": "cleanser",
+   "form": "foaming",
+   "price_kobo": 550000,
+   "skin_types": [
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "sodium_lauryl_sulfate",
+    "cocamidopropyl_betaine",
+    "glycerin",
+    "fragrance",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/foam_cleanser"
+  },
+  {
+   "code": "gel_cleanser",
+   "name": "Clear Gel Cleanser (sulfate-free)",
+   "fictional": true,
+   "active": true,
+   "step": "cleanser",
+   "form": "gel",
+   "price_kobo": 600000,
+   "skin_types": [
+    "normal",
+    "dry",
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "glycerin",
+    "cocamidopropyl_betaine",
+    "panthenol",
+    "aloe",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/gel_cleanser"
+  },
+  {
+   "code": "hydra_serum",
+   "name": "Hydra Boost Serum",
+   "fictional": true,
+   "active": true,
+   "step": "hydrating_serum",
+   "form": "gel",
+   "price_kobo": 1100000,
+   "skin_types": [
+    "normal",
+    "dry",
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "glycerin",
+    "hyaluronic_acid",
+    "panthenol",
+    "aloe",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/hydra_serum"
+  },
+  {
+   "code": "glow_serum",
+   "name": "Glow Lactic Hydrating Serum",
+   "fictional": true,
+   "active": true,
+   "step": "hydrating_serum",
+   "form": "lotion",
+   "price_kobo": 1250000,
+   "skin_types": [
+    "normal",
+    "combination",
+    "oily"
+   ],
+   "ingredients": [
+    "water",
+    "lactic_acid",
+    "glycerin",
+    "hyaluronic_acid",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/glow_serum"
+  },
+  {
+   "code": "niacinamide_serum",
+   "name": "Even Tone Niacinamide Serum",
+   "fictional": true,
+   "active": true,
+   "step": "treatment_serum",
+   "form": "gel",
+   "price_kobo": 1050000,
+   "skin_types": [
+    "normal",
+    "dry",
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "niacinamide",
+    "glycerin",
+    "panthenol",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/niacinamide_serum"
+  },
+  {
+   "code": "vitc_serum",
+   "name": "Bright C Serum",
+   "fictional": true,
+   "active": true,
+   "step": "treatment_serum",
+   "form": "gel",
+   "price_kobo": 1350000,
+   "skin_types": [
+    "normal",
+    "dry",
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "vitamin_c_derivative",
+    "glycerin",
+    "hyaluronic_acid",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/vitc_serum"
+  },
+  {
+   "code": "azelaic_treatment",
+   "name": "Azelaic Clear Treatment",
+   "fictional": true,
+   "active": true,
+   "step": "treatment_serum",
+   "form": "gel",
+   "price_kobo": 1200000,
+   "skin_types": [
+    "normal",
+    "combination",
+    "oily"
+   ],
+   "ingredients": [
+    "water",
+    "azelaic_acid",
+    "glycerin",
+    "niacinamide",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/azelaic_treatment"
+  },
+  {
+   "code": "retinol_serum",
+   "name": "Resurface Retinol Serum",
+   "fictional": true,
+   "active": true,
+   "step": "treatment_serum",
+   "form": "lotion",
+   "price_kobo": 1450000,
+   "skin_types": [
+    "normal",
+    "combination",
+    "oily"
+   ],
+   "ingredients": [
+    "water",
+    "retinol",
+    "squalane",
+    "glyceryl_stearate",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/retinol_serum"
+  },
+  {
+   "code": "barrier_cream",
+   "name": "Barrier Repair Cream",
+   "fictional": true,
+   "active": true,
+   "step": "moisturiser",
+   "form": "cream",
+   "price_kobo": 950000,
+   "skin_types": [
+    "dry",
+    "normal"
+   ],
+   "ingredients": [
+    "water",
+    "glycerin",
+    "ceramides",
+    "shea_butter",
+    "squalane",
+    "glyceryl_stearate",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/barrier_cream"
+  },
+  {
+   "code": "gel_cream",
+   "name": "Light Ceramide Gel-Cream",
+   "fictional": true,
+   "active": true,
+   "step": "moisturiser",
+   "form": "gel",
+   "price_kobo": 900000,
+   "skin_types": [
+    "normal",
+    "combination",
+    "oily"
+   ],
+   "ingredients": [
+    "water",
+    "glycerin",
+    "ceramides",
+    "hyaluronic_acid",
+    "squalane",
+    "panthenol",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/gel_cream"
+  },
+  {
+   "code": "perfumed_cream",
+   "name": "Perfumed Rich Cream",
+   "fictional": true,
+   "active": true,
+   "step": "moisturiser",
+   "form": "cream",
+   "price_kobo": 750000,
+   "skin_types": [
+    "dry",
+    "normal"
+   ],
+   "ingredients": [
+    "water",
+    "shea_butter",
+    "glycerin",
+    "fragrance",
+    "dyes",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/perfumed_cream"
+  },
+  {
+   "code": "mineral_spf",
+   "name": "Daily Mineral SPF",
+   "fictional": true,
+   "active": true,
+   "step": "sunscreen",
+   "form": "lotion",
+   "price_kobo": 1000000,
+   "skin_types": [
+    "normal",
+    "dry",
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "zinc_oxide",
+    "glycerin",
+    "squalane",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/mineral_spf"
+  },
+  {
+   "code": "gel_spf",
+   "name": "Light Gel SPF 50",
+   "fictional": true,
+   "active": true,
+   "step": "sunscreen",
+   "form": "gel",
+   "price_kobo": 950000,
+   "skin_types": [
+    "oily",
+    "combination"
+   ],
+   "ingredients": [
+    "water",
+    "chemical_uv_filters",
+    "denatured_alcohol",
+    "glycerin",
+    "phenoxyethanol"
+   ],
+   "buy_url": "https://example.com/demo/gel_spf"
+  }
+ ],
+ "quizzes": [
+  {
+   "code": "profile_v1",
+   "kind": "profile",
+   "concern": null,
+   "version": 1,
+   "status": "published",
+   "questions": [
+    {
+     "code": "pf1",
+     "text": "Are you pregnant or breastfeeding? We ask because some skincare ingredients are not recommended then.",
+     "type": "single",
+     "show_if": {},
+     "sensitive": true,
+     "optional": true,
+     "options": [
+      {
+       "code": "pf1a",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "pf1b",
+       "text": "Yes",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "pregnancy"
+        ]
+       ]
+      },
+      {
+       "code": "pf1c",
+       "text": "Prefer not to say",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "pregnancy"
+        ]
+       ]
+      }
+     ],
+     "purpose": "Used only to leave out unsuitable ingredients. Deleted when your session ends unless you choose to save it."
+    }
+   ],
+   "result_rules": []
+  },
+  {
+   "code": "skin_type_v1",
+   "kind": "skin_type",
+   "concern": null,
+   "version": 1,
+   "status": "published",
+   "questions": [
+    {
+     "code": "st1",
+     "text": "One hour after washing your face with nothing applied, your skin feels...",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st1a",
+       "text": "Tight, rough or flaky",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "dry",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st1b",
+       "text": "Comfortable, nothing noticeable",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "normal",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st1c",
+       "text": "Shiny or greasy all over",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "oily",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st1d",
+       "text": "Shiny on forehead and nose, tight or comfortable on cheeks",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "combination",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st1e",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "st2",
+     "text": "By midday, your face looks...",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st2a",
+       "text": "Dull or patchy",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "dry",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st2b",
+       "text": "Fresh and even",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "normal",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st2c",
+       "text": "Shiny across the face",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "oily",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st2d",
+       "text": "Shiny only on forehead, nose and chin",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "combination",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st2e",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "st3",
+     "text": "Blotting-paper test: press a sheet on forehead, nose and cheeks.",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st3a",
+       "text": "No oil on any area",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "dry",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st3b",
+       "text": "A little oil on some areas",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "normal",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st3c",
+       "text": "Oil on forehead and nose only",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "combination",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st3d",
+       "text": "Oil on every area",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "oily",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st3e",
+       "text": "Could not try it",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "st4",
+     "text": "Your pores look...",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st4a",
+       "text": "Hardly visible",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "dry",
+         1
+        ],
+        [
+         "score",
+         "normal",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "st4b",
+       "text": "Visible on nose and forehead only",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "combination",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st4c",
+       "text": "Visible and enlarged on most of the face",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "oily",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st4d",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "st5",
+     "text": "How does your skin react to new products?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st5a",
+       "text": "Rarely or never",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "st5b",
+       "text": "Sometimes mild redness or stinging",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "sensitive",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "st5c",
+       "text": "Often stings, burns, itches or turns red",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "sensitive",
+         3
+        ]
+       ]
+      },
+      {
+       "code": "st5d",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "st6",
+     "text": "Does your face flush or redden easily (heat, sun, wind, spicy food)?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "st6a",
+       "text": "Rarely",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "st6b",
+       "text": "Sometimes",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "sensitive",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "st6c",
+       "text": "Often",
+       "not_sure": false,
+       "effects": [
+        [
+         "score",
+         "sensitive",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "st6d",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    }
+   ],
+   "result_rules": [
+    {
+     "kind": "min_answers",
+     "min": 3,
+     "outcome_if_fewer": "needs_more_answers"
+    },
+    {
+     "kind": "conflict",
+     "if": {
+      "oily_at_least": 3,
+      "dry_at_least": 3
+     },
+     "result": "combination"
+    },
+    {
+     "kind": "tie_break",
+     "within": 2,
+     "action": "show_runner_up"
+    },
+    {
+     "kind": "sensitive_threshold",
+     "at_least": 3
+    }
+   ]
+  },
+  {
+   "code": "hyperpigmentation_v1",
+   "kind": "concern",
+   "concern": "hyperpigmentation",
+   "version": 1,
+   "status": "published",
+   "questions": [
+    {
+     "code": "hp1",
+     "text": "Where do you notice dark marks?",
+     "type": "multi",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp1a",
+       "text": "After pimples",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "post_acne"
+        ]
+       ]
+      },
+      {
+       "code": "hp1b",
+       "text": "Sun-exposed areas (cheeks, nose, forehead)",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "sun_related"
+        ]
+       ]
+      },
+      {
+       "code": "hp1c",
+       "text": "Larger patches on cheeks or forehead",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "patchy_pigmentation"
+        ]
+       ]
+      },
+      {
+       "code": "hp1d",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "hp2",
+     "text": "When did they appear?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp2a",
+       "text": "After breakouts",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "post_acne"
+        ]
+       ]
+      },
+      {
+       "code": "hp2b",
+       "text": "After a lot of sun",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "sun_related"
+        ]
+       ]
+      },
+      {
+       "code": "hp2c",
+       "text": "Gradually, no clear reason",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "patchy_pigmentation"
+        ]
+       ]
+      },
+      {
+       "code": "hp2d",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "hp3",
+     "text": "How noticeable are they?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp3a",
+       "text": "Barely, only up close",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "hyperpigmentation",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "hp3b",
+       "text": "Noticeable in normal light",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "hyperpigmentation",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "hp3c",
+       "text": "Noticeable from a distance or widespread",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "hyperpigmentation",
+         3
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "hp4",
+     "text": "How often do you use sunscreen?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp4a",
+       "text": "Daily",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "hp4b",
+       "text": "Sometimes",
+       "not_sure": false,
+       "effects": [
+        [
+         "require_step",
+         "sunscreen",
+         2
+        ]
+       ]
+      },
+      {
+       "code": "hp4c",
+       "text": "Never",
+       "not_sure": false,
+       "effects": [
+        [
+         "require_step",
+         "sunscreen",
+         3
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "hp5",
+     "text": "Is your skin currently irritated, or do you use strong actives (retinol, strong acids)?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp5a",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "hp5b",
+       "text": "Mild irritation",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "irritated"
+        ]
+       ]
+      },
+      {
+       "code": "hp5c",
+       "text": "Yes, often",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "irritated"
+        ],
+        [
+         "flag",
+         "irritated_strong"
+        ],
+        [
+         "caution",
+         "exfoliating_acids"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "hp6",
+     "text": "Is any dark spot new and growing quickly, raised, bleeding, itchy, or changing shape or colour?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "hp6a",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "hp6b",
+       "text": "Yes",
+       "not_sure": false,
+       "effects": [
+        [
+         "red_flag",
+         "Possible changing, growing or bleeding spot: please see a doctor before using products."
+        ]
+       ]
+      },
+      {
+       "code": "hp6c",
+       "text": "Not sure",
+       "not_sure": false,
+       "effects": [
+        [
+         "red_flag",
+         "Possible changing, growing or bleeding spot: please see a doctor before using products."
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "result_rules": [
+    {
+     "kind": "band",
+     "concern": "hyperpigmentation",
+     "bands": [
+      {
+       "max": 1,
+       "band": "mild"
+      },
+      {
+       "max": 2,
+       "band": "moderate"
+      },
+      {
+       "max": 999,
+       "band": "severe"
+      }
+     ]
+    },
+    {
+     "kind": "outcome",
+     "if": "any_red_flag",
+     "result": "refer_to_professional"
+    }
+   ]
+  },
+  {
+   "code": "dehydration_v1",
+   "kind": "concern",
+   "concern": "dehydration",
+   "version": 1,
+   "status": "published",
+   "questions": [
+    {
+     "code": "dh1",
+     "text": "How does your skin feel after cleansing?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh1a",
+       "text": "Comfortable and plump",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh1b",
+       "text": "Slightly tight after about 10 minutes",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ],
+        [
+         "flag",
+         "tight_after_cleansing"
+        ],
+        [
+         "caution",
+         "sulfate_cleansers"
+        ]
+       ]
+      },
+      {
+       "code": "dh1c",
+       "text": "Instantly tight or parched",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         2
+        ],
+        [
+         "flag",
+         "tight_after_cleansing"
+        ],
+        [
+         "caution",
+         "strong_cleansers"
+        ]
+       ]
+      },
+      {
+       "code": "dh1d",
+       "text": "Burning or stinging, even with plain water",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         2
+        ],
+        [
+         "flag",
+         "possible_barrier_damage"
+        ],
+        [
+         "caution",
+         "all_actives"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "dh2",
+     "text": "When did it start?",
+     "type": "multi",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh2a",
+       "text": "Gradually, no clear reason",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "gradual"
+        ]
+       ]
+      },
+      {
+       "code": "dh2b",
+       "text": "After a period of exfoliants or strong actives",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "over_exfoliation"
+        ]
+       ]
+      },
+      {
+       "code": "dh2c",
+       "text": "During the dry or harmattan season, or with air conditioning",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "dry_air"
+        ]
+       ]
+      },
+      {
+       "code": "dh2d",
+       "text": "After switching products",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "product_reaction"
+        ]
+       ]
+      },
+      {
+       "code": "dh2e",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "dh3",
+     "text": "How visible are dullness or fine dry lines?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh3a",
+       "text": "Barely",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh3b",
+       "text": "Only up close or in bright light",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "dh3c",
+       "text": "Noticeable in normal light",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         2
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "dh4",
+     "text": "How often does your skin feel tight or itchy?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh4a",
+       "text": "Rarely",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh4b",
+       "text": "Sometimes",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "dh4c",
+       "text": "Often",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         2
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "dh5",
+     "text": "Pinch test: gently pinch the skin on your cheek or the back of your hand for a few seconds, then release. What happens?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh5a",
+       "text": "Snaps back quickly",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh5b",
+       "text": "Takes a moment to settle",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ],
+        [
+         "flag",
+         "slow_rebound"
+        ]
+       ]
+      },
+      {
+       "code": "dh5c",
+       "text": "Could not tell",
+       "not_sure": true,
+       "effects": []
+      }
+     ],
+     "help": "This is only a hint, not a diagnosis."
+    },
+    {
+     "code": "dh6",
+     "text": "Does your skin feel oily and tight or dull at the same time?",
+     "type": "single",
+     "show_if": {
+      "skin_types": [
+       "oily",
+       "combination"
+      ]
+     },
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh6a",
+       "text": "Yes",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ],
+        [
+         "flag",
+         "oily_dehydrated"
+        ]
+       ]
+      },
+      {
+       "code": "dh6b",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh6c",
+       "text": "Not sure",
+       "not_sure": true,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "dh7",
+     "text": "Which of these do you notice?",
+     "type": "multi",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh7a",
+       "text": "Darker under-eyes or a tired look",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "dh7b",
+       "text": "Makeup looks patchy or settles into lines",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "dh7c",
+       "text": "Skin looks plumper right after a hydrating product",
+       "not_sure": false,
+       "effects": [
+        [
+         "severity",
+         "dehydration",
+         1
+        ]
+       ]
+      },
+      {
+       "code": "dh7d",
+       "text": "None of these",
+       "not_sure": false,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "dh8",
+     "text": "Which of these fit your habits?",
+     "type": "multi",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh8a",
+       "text": "Long, hot showers",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "hot_showers"
+        ]
+       ]
+      },
+      {
+       "code": "dh8b",
+       "text": "Washing your face three or more times a day",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "over_washing"
+        ]
+       ]
+      },
+      {
+       "code": "dh8c",
+       "text": "I rarely drink enough water",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "low_water_intake"
+        ]
+       ]
+      },
+      {
+       "code": "dh8d",
+       "text": "I use a foaming cleanser",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "foaming_cleanser"
+        ]
+       ]
+      },
+      {
+       "code": "dh8e",
+       "text": "None",
+       "not_sure": false,
+       "effects": []
+      }
+     ]
+    },
+    {
+     "code": "dh9",
+     "text": "Do you use strong actives (retinol, strong acids, scrubs)?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh9a",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh9b",
+       "text": "Occasionally",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "active_use"
+        ]
+       ]
+      },
+      {
+       "code": "dh9c",
+       "text": "Often",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "active_use"
+        ],
+        [
+         "flag",
+         "active_use_high"
+        ],
+        [
+         "caution",
+         "exfoliating_acids"
+        ],
+        [
+         "caution",
+         "retinoids"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "code": "dh10",
+     "text": "Is your skin cracked and bleeding, oozing or weeping, covered in a rash or scaly patches, or intensely itchy (especially at night)?",
+     "type": "single",
+     "show_if": {},
+     "sensitive": false,
+     "optional": false,
+     "options": [
+      {
+       "code": "dh10a",
+       "text": "No",
+       "not_sure": false,
+       "effects": []
+      },
+      {
+       "code": "dh10b",
+       "text": "Mild cracking only",
+       "not_sure": false,
+       "effects": [
+        [
+         "flag",
+         "cracking"
+        ],
+        [
+         "caution",
+         "all_actives"
+        ]
+       ]
+      },
+      {
+       "code": "dh10c",
+       "text": "Yes",
+       "not_sure": false,
+       "effects": [
+        [
+         "red_flag",
+         "Cracked, bleeding, weeping or intensely itchy skin needs a professional: please see a doctor."
+        ]
+       ]
+      },
+      {
+       "code": "dh10d",
+       "text": "Not sure",
+       "not_sure": false,
+       "effects": [
+        [
+         "red_flag",
+         "Cracked, bleeding, weeping or intensely itchy skin needs a professional: please see a doctor."
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "result_rules": [
+    {
+     "kind": "band",
+     "concern": "dehydration",
+     "bands": [
+      {
+       "max": 2,
+       "band": "mild"
+      },
+      {
+       "max": 5,
+       "band": "moderate"
+      },
+      {
+       "max": 999,
+       "band": "severe"
+      }
+     ]
+    },
+    {
+     "kind": "outcome",
+     "if": "any_red_flag",
+     "result": "refer_to_professional"
+    }
+   ]
+  }
+ ],
+ "test_cases": [
+  {
+   "name": "A: combination skin, severe dehydration after over-exfoliating",
+   "concerns": [
+    "dehydration"
+   ],
+   "answers": {
+    "pf1": [
+     "pf1a"
+    ],
+    "st1": [
+     "st1d"
+    ],
+    "st2": [
+     "st2d"
+    ],
+    "st3": [
+     "st3c"
+    ],
+    "st4": [
+     "st4b"
+    ],
+    "st5": [
+     "st5a"
+    ],
+    "st6": [
+     "st6a"
+    ],
+    "dh1": [
+     "dh1c"
+    ],
+    "dh2": [
+     "dh2b",
+     "dh2c"
+    ],
+    "dh3": [
+     "dh3c"
+    ],
+    "dh4": [
+     "dh4c"
+    ],
+    "dh5": [
+     "dh5b"
+    ],
+    "dh6": [
+     "dh6a"
+    ],
+    "dh7": [
+     "dh7a"
+    ],
+    "dh8": [
+     "dh8d"
+    ],
+    "dh9": [
+     "dh9b"
+    ],
+    "dh10": [
+     "dh10a"
+    ]
+   },
+   "expected": {
+    "outcome": "recommend",
+    "skin_type": "combination",
+    "sensitive": false,
+    "bands": {
+     "dehydration": "severe"
+    },
+    "template": "barrier_first",
+    "flags": [
+     "active_use",
+     "dry_air",
+     "foaming_cleanser",
+     "over_exfoliation",
+     "oily_dehydrated",
+     "slow_rebound",
+     "tight_after_cleansing"
+    ],
+    "groups": [
+     "exfoliating_acids",
+     "foaming_forms",
+     "retinoids",
+     "strong_cleansers",
+     "sulfate_cleansers"
+    ],
+    "eligible": [
+     "azelaic_treatment",
+     "gel_cleanser",
+     "gel_cream",
+     "hydra_serum",
+     "milk_cleanser",
+     "mineral_spf",
+     "niacinamide_serum",
+     "vitc_serum"
+    ],
+    "steps": {
+     "cleanser": [
+      "gel_cleanser",
+      "milk_cleanser"
+     ],
+     "hydrating_serum": [
+      "hydra_serum"
+     ],
+     "moisturiser": [
+      "gel_cream"
+     ],
+     "sunscreen": [
+      "mineral_spf"
+     ]
+    },
+    "tips": [
+     "tip_dh_air",
+     "tip_dh_cleanser",
+     "tip_dh_foaming",
+     "tip_dh_lukewarm",
+     "tip_dh_oily",
+     "tip_dh_overexfoliation"
+    ]
+   },
+   "why": "Lactic-acid serum, retinol, foaming SLS cleanser, fragrance/alcohol products and the dry-skin cream are all filtered out; avoid beats seek."
+  },
+  {
+   "name": "B: dry sensitive skin, moderate hyperpigmentation, pregnancy unsure",
+   "concerns": [
+    "hyperpigmentation"
+   ],
+   "answers": {
+    "pf1": [
+     "pf1c"
+    ],
+    "st1": [
+     "st1a"
+    ],
+    "st2": [
+     "st2a"
+    ],
+    "st3": [
+     "st3a"
+    ],
+    "st4": [
+     "st4a"
+    ],
+    "st5": [
+     "st5c"
+    ],
+    "st6": [
+     "st6b"
+    ],
+    "hp1": [
+     "hp1a"
+    ],
+    "hp2": [
+     "hp2a"
+    ],
+    "hp3": [
+     "hp3b"
+    ],
+    "hp4": [
+     "hp4b"
+    ],
+    "hp5": [
+     "hp5b"
+    ],
+    "hp6": [
+     "hp6a"
+    ]
+   },
+   "expected": {
+    "outcome": "recommend",
+    "skin_type": "dry",
+    "sensitive": true,
+    "bands": {
+     "hyperpigmentation": "moderate"
+    },
+    "template": "hyperpigmentation_routine",
+    "flags": [
+     "irritated",
+     "post_acne",
+     "pregnancy"
+    ],
+    "required_steps": {
+     "sunscreen": 2
+    },
+    "groups": [
+     "common_irritants",
+     "exfoliating_acids",
+     "retinoids"
+    ],
+    "eligible": [
+     "barrier_cream",
+     "gel_cleanser",
+     "hydra_serum",
+     "milk_cleanser",
+     "mineral_spf",
+     "niacinamide_serum",
+     "vitc_serum"
+    ],
+    "steps": {
+     "cleanser": [
+      "gel_cleanser",
+      "milk_cleanser"
+     ],
+     "treatment_serum": [
+      "niacinamide_serum",
+      "vitc_serum"
+     ],
+     "moisturiser": [
+      "barrier_cream"
+     ],
+     "sunscreen": [
+      "mineral_spf"
+     ]
+    },
+    "tips": [
+     "tip_hp_patience",
+     "tip_hp_picking",
+     "tip_hp_sunscreen"
+    ]
+   },
+   "why": "Azelaic treatment is excluded by skin type, retinol by the pregnancy default, fragrance cream by sensitivity."
+  },
+  {
+   "name": "C: red flag stops recommendations",
+   "concerns": [
+    "dehydration"
+   ],
+   "answers": {
+    "st1": [
+     "st1a"
+    ],
+    "st2": [
+     "st2a"
+    ],
+    "st3": [
+     "st3a"
+    ],
+    "dh10": [
+     "dh10c"
+    ]
+   },
+   "expected": {
+    "outcome": "refer_to_professional"
+   },
+   "why": "Any red flag means refer to a professional and show no products."
+  },
+  {
+   "name": "D: too few real answers",
+   "concerns": [],
+   "answers": {
+    "st1": [
+     "st1e"
+    ],
+    "st2": [
+     "st2e"
+    ],
+    "st3": [
+     "st3e"
+    ],
+    "st4": [
+     "st4d"
+    ],
+    "st5": [
+     "st5d"
+    ],
+    "st6": [
+     "st6d"
+    ]
+   },
+   "expected": {
+    "outcome": "needs_more_answers"
+   },
+   "why": "Fewer than 3 real answers: ask the user to retake or choose manually."
+  },
+  {
+   "name": "E: oily skin, mild dehydration, no cautions (lactic acid serum allowed)",
+   "concerns": [
+    "dehydration"
+   ],
+   "answers": {
+    "pf1": [
+     "pf1a"
+    ],
+    "st1": [
+     "st1c"
+    ],
+    "st2": [
+     "st2c"
+    ],
+    "st3": [
+     "st3d"
+    ],
+    "st4": [
+     "st4c"
+    ],
+    "st5": [
+     "st5a"
+    ],
+    "st6": [
+     "st6a"
+    ],
+    "dh1": [
+     "dh1a"
+    ],
+    "dh2": [
+     "dh2e"
+    ],
+    "dh3": [
+     "dh3a"
+    ],
+    "dh4": [
+     "dh4a"
+    ],
+    "dh5": [
+     "dh5a"
+    ],
+    "dh6": [
+     "dh6b"
+    ],
+    "dh7": [
+     "dh7d"
+    ],
+    "dh8": [
+     "dh8e"
+    ],
+    "dh9": [
+     "dh9a"
+    ],
+    "dh10": [
+     "dh10a"
+    ]
+   },
+   "expected": {
+    "outcome": "recommend",
+    "skin_type": "oily",
+    "sensitive": false,
+    "bands": {
+     "dehydration": "mild"
+    },
+    "template": "dehydration_routine",
+    "flags": [],
+    "groups": [],
+    "eligible": [
+     "azelaic_treatment",
+     "gel_cleanser",
+     "gel_cream",
+     "glow_serum",
+     "hydra_serum",
+     "mineral_spf",
+     "niacinamide_serum",
+     "retinol_serum",
+     "vitc_serum"
+    ],
+    "steps": {
+     "cleanser": [
+      "gel_cleanser"
+     ],
+     "hydrating_serum": [
+      "glow_serum",
+      "hydra_serum"
+     ],
+     "moisturiser": [
+      "gel_cream"
+     ],
+     "sunscreen": [
+      "mineral_spf"
+     ]
+    },
+    "tips": []
+   },
+   "why": "Same lactic-acid serum that case A excludes is allowed here, because no flag or sensitivity blocks it."
+  }
+ ]
+}

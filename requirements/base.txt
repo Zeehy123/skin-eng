@@ -1,0 +1,13 @@
+# base.txt is what th eapp needs to run
+
+Django>=5.2,<5.3
+djangorestframework>=3.16
+# djangorestframework: builds the API on top of Django.
+drf-spectacular>=0.28
+# drf-spectacular: reads your API code and generates the OpenAPI schema and Swagger docs.
+django-environ>=0.12
+# django-environ: reads settings (secret key, database address) from a .env file.
+django-cors-headers>=4.7
+# django-cors-headers: lets the React app, running on another port, call the API.
+psycopg[binary]>=3.2
+# psycopg: the PostgreSQL driver. 

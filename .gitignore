@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+.pytest_cache/
+.ruff_cache/
+node_modules/
+dist/
+.idea/
+
+# Each line keeps something out of Git:
+#  the virtual environment (rebuildable), Python cache files, .env (secrets must never be committed), the local database, test and linter caches, and frontend build output.
