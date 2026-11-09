@@ -53,6 +53,9 @@ class Snapshot:
   def from_file(cls, path) -> Snapshot:
         return cls(json.loads(Path(path).read_text(encoding="utf-8")))
  # This method retrieves the latest published quiz of a particular type.
+  def ingredient_name(self, code: str) -> str:
+        """Short lower-case name for sentences: 'Panthenol (vitamin B5)' -> 'panthenol'."""
+        return self.ingredients[code]["name"].split(" (")[0].lower()
   def quiz_by_kind(self, kind: str) -> dict | None:
 # since self.quizzes is a dicionary, calling .values() retrieves all the quiz records without their dictionary keys
       return _latest(q for q in self.quizzes.values() if q["kind"] == kind)

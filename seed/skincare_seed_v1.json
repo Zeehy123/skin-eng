@@ -1,18 +1,20 @@
 {
  "meta": {
-  "name": "Skincare engine seed v1",
-  "created": "2026-10-26",
+  "name": "Skincare engine seed v1.1",
+  "created": "2026-10-28",
   "status": "DEMO CONTENT. Not medical advice. Needs expert review before any real customer sees it.",
   "formats": {
    "condition": "AND of keys: all_flags, any_flags, none_flags, skin_types, sensitive (bool), concerns (selected), concern_bands {concern: [bands]}; any_of [conditions] gives OR; {} always passes",
    "effect": "[kind, target, weight]. kinds: score (target skin type or 'sensitive'), severity (target concern), flag, caution (target caution group), require_step (target step type, weight = priority 1-3), red_flag (target = message)",
    "money": "integer kobo (100 kobo = 1 Naira)",
-   "precedence": "avoid and caution always override seek"
+   "precedence": "avoid and caution always override seek",
+   "scoring": "points = (priority + matching boosts) x position factor x band multiplier; use-with-care ingredients subtract care_penalty each; ties break on preferred form, then lower price, then code"
   },
   "notes": [
    "All products are fictional demo products.",
    "Items with needs_review true are not from the cited article and must be checked by an expert.",
-   "test_cases were verified against a small filter-only checker; scoring and ranking are not covered yet."
+   "test_cases (including expected_routine picks) are verified by the engine test suite.",
+   "scoring holds the numbers behind product ranking; see engine/skin_engine/scoring.py."
   ]
  },
  "sources": {
@@ -2849,6 +2851,16 @@
    ]
   }
  ],
+ "scoring": {
+  "band_multiplier": {
+   "mild": 1.0,
+   "moderate": 1.25,
+   "severe": 1.5
+  },
+  "position_cutoff": 5,
+  "late_position_factor": 0.5,
+  "care_penalty": 1.0
+ },
  "test_cases": [
   {
    "name": "A: combination skin, severe dehydration after over-exfoliating",
@@ -2967,7 +2979,22 @@
      "tip_dh_overexfoliation"
     ]
    },
-   "why": "Lactic-acid serum, retinol, foaming SLS cleanser, fragrance/alcohol products and the dry-skin cream are all filtered out; avoid beats seek."
+   "why": "Lactic-acid serum, retinol, foaming SLS cleanser, fragrance/alcohol products and the dry-skin cream are all filtered out; avoid beats seek.",
+   "expected_routine": {
+    "template": "barrier_first",
+    "picks": {
+     "cleanser": "milk_cleanser",
+     "hydrating_serum": "hydra_serum",
+     "moisturiser": "gel_cream",
+     "sunscreen": "mineral_spf"
+    },
+    "pick_scores": {
+     "milk_cleanser": 10.5,
+     "hydra_serum": 15.0,
+     "gel_cream": 21.0,
+     "mineral_spf": 7.5
+    }
+   }
   },
   {
    "name": "B: dry sensitive skin, moderate hyperpigmentation, pregnancy unsure",
@@ -3067,7 +3094,22 @@
      "tip_hp_sunscreen"
     ]
    },
-   "why": "Azelaic treatment is excluded by skin type, retinol by the pregnancy default, fragrance cream by sensitivity."
+   "why": "Azelaic treatment is excluded by skin type, retinol by the pregnancy default, fragrance cream by sensitivity.",
+   "expected_routine": {
+    "template": "hyperpigmentation_routine",
+    "picks": {
+     "cleanser": "gel_cleanser",
+     "treatment_serum": "niacinamide_serum",
+     "moisturiser": "barrier_cream",
+     "sunscreen": "mineral_spf"
+    },
+    "pick_scores": {
+     "gel_cleanser": 0.0,
+     "niacinamide_serum": 3.75,
+     "barrier_cream": 0.0,
+     "mineral_spf": 2.5
+    }
+   }
   },
   {
    "name": "C: red flag stops recommendations",
@@ -3217,7 +3259,21 @@
     },
     "tips": []
    },
-   "why": "Same lactic-acid serum that case A excludes is allowed here, because no flag or sensitivity blocks it."
+   "why": "Same lactic-acid serum that case A excludes is allowed here, because no flag or sensitivity blocks it.",
+   "expected_routine": {
+    "template": "dehydration_routine",
+    "picks": {
+     "cleanser": "gel_cleanser",
+     "hydrating_serum": "hydra_serum",
+     "moisturiser": "gel_cream",
+     "sunscreen": "mineral_spf"
+    },
+    "pick_scores": {
+     "hydra_serum": 10.0,
+     "gel_cream": 12.0,
+     "mineral_spf": 5.0
+    }
+   }
   }
  ]
 }
